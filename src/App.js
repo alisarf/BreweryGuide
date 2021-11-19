@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import ReactMapGL, {Marker} from 'react-map-gl';
+import ReactMapGL, {Marker, Popup} from 'react-map-gl';
 import './App.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -22,13 +22,14 @@ const api = {
 function App() {
   const [query, setQuery] = useState('');
   const [weather, setWeather] = useState({});
-  const [brewery, setBrewery] = useState();
+  const [breweryList, setBreweryList] = useState();
+  const [brewAppMap, setBrewAppMap] = useState({latitude: 47.606, longitude: -122.3351});
 
   const [viewport, setViewport] = useState({
     latitude: 45.4211,
     longitude: -75.6903,
-    width: "500px",
-    height: "500px",
+    width: "40vw",
+    height: "40vw",
     zoom: 12
   });
   
@@ -54,15 +55,10 @@ function App() {
     
   }
 
-  //get long and lat
+  //get long and lat for Map
   const coordinates = (location) => {
-    console.log(location.lat+ ': Latitude');
-    console.log(viewport.latitude + ':State Latitude');
     let latitude = location.lat;
-    console.log(location.lon+ ': Longitude');
-    console.log(viewport.longitude + ':State Longitude');
     let longitude = location.lon;
-
     setViewport(oldState=> ({ ...oldState, longitude: longitude, latitude: latitude }));
   };
 
@@ -78,18 +74,15 @@ function App() {
           console.log(element + 'this is the brewery')
           return <li><a href={element.website_url}>{element.name}</a></li>;
         });
-        //newresult = newresult.slice(0,5);
-        //console.log(newresult)
-        setBrewery(newresult);
+        setBreweryList(newresult);
       });
   }
 
-
+  console.log('this is a test' + brewAppMap.latitude)
 
   const dateBuilder = (d) => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
     let day = days[d.getDay()];
     let date = d.getDate();
     let month = months[d.getMonth()];
@@ -133,22 +126,35 @@ function App() {
           </div>
           <div className="meetup">
             <ul>
-            {brewery}
+            {breweryList}
             </ul>
+            <div>
+            <ReactMapGL        
+              {...viewport}
+            mapboxApiAccessToken={"pk.eyJ1IjoiYWxpZmFyZXNib3Vsb3MiLCJhIjoiY2t3NWs5aWdzNmUxZTJubzB0dXhuMjJjZyJ9.gF9Yte_ZD6xwUJKf8oyyyg"}
+            mapStyle = 'mapbox://styles/alifaresboulos/cktfya9h13qjl18s2pkfgiyx4'
+            onViewportChange={viewport => {
+              setViewport(viewport);
+            }}>
+            <Marker
+              latitude = {brewAppMap.latitude}
+              longitude = {brewAppMap.longitude}
+            >
+              <button className="beerMarker">
+                <img src="/beer.svg" alt="beer glass"/>
+              </button>
+              
+
+            </Marker>
+            </ReactMapGL>
+            </div>
+
           </div>
 
         </div>
         ):('')}
         
-          <ReactMapGL        
-          {...viewport}
-        mapboxApiAccessToken={"pk.eyJ1IjoiYWxpZmFyZXNib3Vsb3MiLCJhIjoiY2t3NWs5aWdzNmUxZTJubzB0dXhuMjJjZyJ9.gF9Yte_ZD6xwUJKf8oyyyg"}
-        mapStyle = 'mapbox://styles/alifaresboulos/cktfya9h13qjl18s2pkfgiyx4'
-        onViewportChange={viewport => {
-          setViewport(viewport);
-        }}>
 
-        </ReactMapGL>
         
       </main>
     </div>
