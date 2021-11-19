@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import ReactMapGL from 'react-map-gl';
+import ReactMapGL, {Marker} from 'react-map-gl';
 import './App.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -34,8 +34,6 @@ function App() {
   
 
 
-  
-
 
 //weather -> brewery once location set
 
@@ -47,11 +45,19 @@ function App() {
         .then(result => {
           setWeather(result) //set result as weather object
           searchGroups(query); //find breweries by location entered
+          //get long and lat send to function to change setviewport
+          coordinates(result.coord);
           setQuery(''); //resets query search box after event
           console.log(result);
         });
     }
     
+  }
+
+  //get long and lat
+  const coordinates = (location) => {
+    console.log(location.lat+ ': Latitude');
+    console.log(location.lon+ ': Longitude');
   }
 
 
@@ -129,11 +135,12 @@ function App() {
           <ReactMapGL        
           {...viewport}
         mapboxApiAccessToken={"pk.eyJ1IjoiYWxpZmFyZXNib3Vsb3MiLCJhIjoiY2t3NWs5aWdzNmUxZTJubzB0dXhuMjJjZyJ9.gF9Yte_ZD6xwUJKf8oyyyg"}
+        mapStyle = 'mapbox://styles/alifaresboulos/cktfya9h13qjl18s2pkfgiyx4'
         onViewportChange={viewport => {
           setViewport(viewport);
-        }}
-            >Markers here
-            </ReactMapGL>
+        }}>
+
+        </ReactMapGL>
         
       </main>
     </div>
