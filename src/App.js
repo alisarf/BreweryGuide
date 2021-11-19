@@ -5,7 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 //Brewery Finder
-const meetupapi = {
+const mapboxapi = {
   base: 'https://api.openbrewerydb.org/breweries?by_city='
 }
 
@@ -29,7 +29,7 @@ function App() {
     longitude: -75.6903,
     width: "500px",
     height: "500px",
-    zoom: 10
+    zoom: 12
   });
   
 
@@ -57,17 +57,25 @@ function App() {
   //get long and lat
   const coordinates = (location) => {
     console.log(location.lat+ ': Latitude');
+    console.log(viewport.latitude + ':State Latitude');
+    let latitude = location.lat;
     console.log(location.lon+ ': Longitude');
-  }
+    console.log(viewport.longitude + ':State Longitude');
+    let longitude = location.lon;
+
+    setViewport(oldState=> ({ ...oldState, longitude: longitude, latitude: latitude }));
+  };
 
 
   const searchGroups = (location) => {
-    fetch(`${meetupapi.base}${location}`)
+    fetch(`${mapboxapi.base}${location}`)
       .then(res => res.json()) //format to json result as promise
       .then(result => {
         //setBrewery(result.);
         console.log(result[0].website_url);
         let newresult = result.map(function(element){
+          //map the breweries
+          console.log(element + 'this is the brewery')
           return <li><a href={element.website_url}>{element.name}</a></li>;
         });
         //newresult = newresult.slice(0,5);
