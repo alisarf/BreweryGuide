@@ -15,15 +15,13 @@ const api = {
 }
 
 
-
-
 //mapbox
 
 function App() {
   const [query, setQuery] = useState('');
   const [weather, setWeather] = useState({});
   const [breweryList, setBreweryList] = useState();
-  const [brewAppMap, setBrewAppMap] = useState({latitude: 47.606, longitude: -122.3351});
+  const [brewAppMap, setBrewAppMap] = useState([{name: 'somebrewery', latitude: 47.606, longitude: -122.3351}]);
 
   const [viewport, setViewport] = useState({
     latitude: 45.4211,
@@ -52,8 +50,26 @@ function App() {
           console.log(result);
         });
     }
-    
   }
+
+  //set breweries to map
+  const brewToMap = (brewlist) => {
+    console.log(brewlist[0]);
+    const newBrewList  = brewlist.map(function(element){
+      //map the breweries
+      console.log(element.name + element.longitude + element.latitude)
+      return ({'name' : element.name, 'longitude': (parseInt(element.longitude)), 'latitude': (parseInt(element.latitude))});
+    });
+    console.log(newBrewList + 'newwest brew list');
+    //push this list to set the brew map app !!!
+    //setBrewAppMap(newBrewList);
+    console.log((JSON.stringify(brewAppMap[0])))
+    console.log('checking the brew to map list' + (JSON.stringify(brewAppMap)))
+  }
+
+
+
+
 
   //get long and lat for Map
   const coordinates = (location) => {
@@ -71,14 +87,15 @@ function App() {
         console.log(result[0].website_url);
         let newresult = result.map(function(element){
           //map the breweries
-          console.log(element + 'this is the brewery')
+          //console.log(element + 'this is the brewery')
           return <li><a href={element.website_url}>{element.name}</a></li>;
         });
+        brewToMap(result);
         setBreweryList(newresult);
       });
   }
 
-  console.log('this is a test' + brewAppMap.latitude)
+  //console.log('this is a test' + brewAppMap.latitude)
 
   const dateBuilder = (d) => {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -136,16 +153,14 @@ function App() {
             onViewportChange={viewport => {
               setViewport(viewport);
             }}>
-            <Marker
-              latitude = {brewAppMap.latitude}
-              longitude = {brewAppMap.longitude}
-            >
-              <button className="beerMarker">
-                <img src="/beer.svg" alt="beer glass"/>
-              </button>
-              
-
-            </Marker>
+              <Marker
+                latitude = {brewAppMap[0].latitude}
+                longitude = {brewAppMap[0].longitude}
+              >
+                <button className="beerMarker">
+                  <img src="/beer.svg" alt="beer glass"/>
+                </button>
+              </Marker>
             </ReactMapGL>
             </div>
 
